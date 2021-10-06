@@ -19,9 +19,9 @@ class VertexDataset(BaseDataset):
     instance_label: str
 
     def __post_init__(self):
-        if self.instance_label == 'reco':
-            self.instance_label = 'reco_vtxID'
-        elif self.instance_label == 'truth':
+        if self.instance_label == 'truth':
+            self.instance_label = 'truth_vtxID'
+        elif self.instance_label == 'reco':
             raise NotImplementedError()
         else:
             raise NotImplementedError()
