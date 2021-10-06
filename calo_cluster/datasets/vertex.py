@@ -96,15 +96,15 @@ class VertexDataModule(BaseDataModule):
             truth_tree = root_dir['Truth_Vertex_PV_Selected;6']
             reco_tree = root_dir['Reco_Vertex;4']
             jagged_dict = {}
-            prefix = 'reco_vtx_fitted_trk_'
-            for k, v in tqdm(reco_tree.items()):
+            prefix = 'truth_vtx_fitted_trk_'
+            for k, v in tqdm(truth_tree.items()):
                 if not k.startswith(prefix):
                     continue
                 jagged_dict[k[len(prefix):]] = v.array()
-            jagged_dict['reco_vtxID'] = jagged_dict.pop('vtxID')
+            jagged_dict['truth_vtxID'] = jagged_dict.pop('vtxID')
             coords = ['d0', 'z0', 'phi', 'theta', 'qp']
             scale = np.array([0.05, 500, 6, 2, 4])
-            for n in tqdm(range(len(reco_tree[0].array()))):
+            for n in tqdm(range(len(truth_tree[0].array()))):
                 df_dict = {k: jagged_dict[k][n] for k in jagged_dict.keys()}
                 flat_event = pd.DataFrame(df_dict)
                 flat_event[coords] /= scale
