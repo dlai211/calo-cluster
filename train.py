@@ -13,6 +13,7 @@ from calo_cluster.models.spvcnn import SPVCNN
 from calo_cluster.training.config import fix_config
 
 def train(cfg: DictConfig) -> None:
+    print("running train.py/train")
     logging.info('Beginning training...')
 
     fix_config(cfg)
@@ -23,6 +24,7 @@ def train(cfg: DictConfig) -> None:
         cfg.checkpoint.save_top_k = 0
         cfg.checkpoint.save_last = False
     else:
+        print("train.py not overfit")
         overfit_batches = 0.0
     
     callbacks = []
@@ -30,6 +32,7 @@ def train(cfg: DictConfig) -> None:
 
     # Set up SWA.
     if cfg.swa.active:
+        print("train.py swa active")
         swa_callback = hydra.utils.instantiate(cfg.swa.callback)
         callbacks.append(swa_callback)
 
@@ -55,6 +58,7 @@ def train(cfg: DictConfig) -> None:
     cfg.wandb.version = logger.version
 
     if is_rank_zero():
+        print("train.py is_rank_zero true")
         config_path = Path(logger.experiment.dir) / '.hydra' / 'config.yaml'
         with config_path.open('r+') as f:
             data = yaml.load(f)
@@ -64,8 +68,10 @@ def train(cfg: DictConfig) -> None:
 
     datamodule = hydra.utils.instantiate(cfg.dataset)
     if cfg.init_ckpt is not None:
+        print("train.py cfg.init_ckpt is not None")
         model = SPVCNN.load_from_checkpoint(cfg.init_ckpt, **cfg)
     else:
+        print("train.py cfg.init_ckpt is None")
         model = hydra.utils.instantiate(cfg.model.target, cfg)
     
     # train
@@ -77,12 +83,14 @@ def train(cfg: DictConfig) -> None:
 
 @hydra.main(config_path="configs", config_name="config")
 def hydra_main(cfg: DictConfig) -> None:
+    print("running train.py/hydra_main")
     # Set up python logging.
     logger = logging.getLogger()
     if is_rank_zero():
         logger.setLevel(cfg.log_level)
         logging.info(OmegaConf.to_yaml(cfg))
     if 'slurm' in cfg.train:
+        print('train.py slurm in cfg.train')
         slurm_dir = Path.cwd() / 'slurm'
         slurm_dir.mkdir()
         executor = submitit.AutoExecutor(slurm_dir)
