@@ -11,10 +11,10 @@ voxel_size: 0.05
 cluster_ignore_labels: [-1,]
 
 # data location (modify as needed):
-data_dir: /data/vertex/raw
+data_dir: drive/MyDrive/ML-Vertexing/data/vertex
 
 # config fields:
 feats: ['d0', 'z0', 'phi', 'theta', 'qp', 'time']
 coords: ['d0', 'z0', 'phi', 'theta', 'qp']
 # one of: {reco, truth}
-instance_label: reco
+instance_label: truth
