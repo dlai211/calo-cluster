@@ -15,6 +15,7 @@ from calo_cluster.evaluation.studies import functional as F
 
 
 def main():
+    print('running export_model.py')
     exp = HCalPFExperiment(wandb_version='3bybg4l1')
     del exp.model.embed_criterion
     dataloader = exp.datamodule.val_dataloader()
