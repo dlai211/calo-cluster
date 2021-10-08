@@ -79,6 +79,7 @@ class ResidualBlock(nn.Module):
 
 
 class SPVCNN(pl.LightningModule):
+    print('running spvcnn.py SPVCNN')
     def __init__(self, cfg: OmegaConf):
         super().__init__()
         self.hparams.update(cfg)
@@ -237,6 +238,7 @@ class SPVCNN(pl.LightningModule):
         return (torch.isinf(x.F).sum(), torch.isnan(x.F).sum())
 
     def forward(self, x):
+        print('running SPVCNN/forward')
         # x: SparseTensor z: PointTensor
         z = PointTensor(x.F, x.C.float())
 
@@ -291,6 +293,7 @@ class SPVCNN(pl.LightningModule):
         return out
 
     def configure_optimizers(self):
+        print('spvcnn.py SPVCNN/configure_optimizers')
         optimizer = self.optimizer_factory(self.parameters())
         if self.scheduler_factory is not None:
             scheduler = self.scheduler_factory(optimizer, self.num_training_steps())
@@ -300,6 +303,7 @@ class SPVCNN(pl.LightningModule):
             return optimizer
 
     def step(self, batch, batch_idx, split):
+        print('spvcnn.py SPVCNN/step')
         inputs = batch['features']
         targets = batch['labels'].F.long()
         outputs = self(inputs)
@@ -340,28 +344,39 @@ class SPVCNN(pl.LightningModule):
         return ret
 
     def training_step(self, batch, batch_idx):
+        print('spvcnn.py SPVCNN/training_step')
         return self.step(batch, batch_idx, split='train')
 
     def validation_step(self, batch, batch_idx):
+        print('spvcnn.py SPVCNN/validation_step')
         return self.step(batch, batch_idx, split='val')
 
     def test_step(self, batch, batch_idx):
+        print('spvcnn.py SPVCNN/test_step')
         return self.step(batch, batch_idx, split='test')
 
     def num_training_steps(self) -> int:
+        print('spvcnn.py SPVCNN/num_training_steps')
         """Total training steps inferred from datamodule and devices."""
         if self.trainer.max_steps:
             return self.trainer.max_steps
 
         limit_batches = self.trainer.limit_train_batches
+        print('limit_batches:', limit_batches)
         batches = len(self.train_dataloader())
+        print('batches:', batches)
         batches = min(batches, limit_batches) if isinstance(limit_batches, int) else int(limit_batches * batches)     
-
+        print('batches:', batches)
+        
+        print('num_gpus, num_processes:', self.trainer.num_gpus, self.trainer.num_processes)
         num_devices = max(1, self.trainer.num_gpus, self.trainer.num_processes)
         if self.trainer.tpu_cores:
             num_devices = max(num_devices, self.trainer.tpu_cores)
-
+        
+        print('accumulate_grad_batches, num_devices"', self.trainer.accumulate_grad_batches, num_devices)
         effective_accum = self.trainer.accumulate_grad_batches * num_devices
+        print('effective_accum', effective_accum)
+        print('max_epochs:', self.trainer.max_epochs)
         num_steps = (batches // effective_accum) * self.trainer.max_epochs 
         num_steps += batches * self.trainer.max_epochs - num_steps * effective_accum
         print(f'num steps = {num_steps}')
