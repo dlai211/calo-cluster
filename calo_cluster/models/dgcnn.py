@@ -26,6 +26,7 @@ import hydra
 
 
 def knn(x, k):
+    print('dgcnn.py knn')
     inner = -2*torch.matmul(x.transpose(2, 1), x)
     xx = torch.sum(x**2, dim=1, keepdim=True)
     pairwise_distance = -xx - inner - xx.transpose(2, 1)
@@ -37,6 +38,7 @@ def knn(x, k):
 
 
 class DGCNN(pl.LightningModule):
+    print('running dgcnn.py DGCNN')
     def __init__(self, cfg: OmegaConf):
         super(DGCNN, self).__init__()
 
@@ -101,6 +103,7 @@ class DGCNN(pl.LightningModule):
                                                     self.hparams.model.embed_dim, kernel_size=1, bias=False))
 
     def forward(self, x):
+        print('dgcnn.py DGCNN/forward')
         x = x.permute(0, 2, 1)
         batch_size = x.size(0)
         num_points = x.size(2)
