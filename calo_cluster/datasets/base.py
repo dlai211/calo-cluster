@@ -131,7 +131,7 @@ class BaseDataset(Dataset):
 
 @dataclass
 class BaseDataModule(pl.LightningDataModule):
-    print('running vertex.py/BaseDataModule')
+    print('running base.py/BaseDataModule')
     """The base pytorch-lightning data module that handles common data loading tasks.
 
 
@@ -203,13 +203,13 @@ class BaseDataModule(pl.LightningDataModule):
         self._validate_fracs()
 
     def _validate_fracs(self):
-        print('vertex.py BaseDataModule/_validate_fracs')
+        print('base.py BaseDataModule/_validate_fracs')
         fracs = [self.event_frac, self.train_frac, self.test_frac]
         assert all(0.0 <= f <= 1.0 for f in fracs)
         assert self.train_frac + self.test_frac <= 1.0
 
     def train_val_test_split(self) -> Tuple[Union[List[Path], None], Union[List[Path], None], Union[List[Path], None]]:
-        print('vertex.py BaseDataModule/train_val_test_split')
+        print('base.py BaseDataModule/train_val_test_split')
         """Returns train, val, and test file lists
 
         Assumes that self.files is defined and there is no preset split in the dataset.
@@ -228,7 +228,7 @@ class BaseDataModule(pl.LightningDataModule):
         return train_files, val_files, test_files
 
     def setup(self, stage: str = None) -> None:
-        print('vertex.py BaseDataModule/setup')
+        print('base.py BaseDataModule/setup')
         train_files, val_files, test_files = self.train_val_test_split()
 
         logging.debug(f'setting seed={self.seed}')
@@ -241,7 +241,7 @@ class BaseDataModule(pl.LightningDataModule):
             self.test_dataset = self.make_dataset(test_files, split='test')
 
     def dataloader(self, dataset: BaseDataset) -> DataLoader:
-        print('vertex.py BaseDataModule/dataloader')
+        print('base.py BaseDataModule/dataloader')
         return DataLoader(
             dataset,
             batch_size=self.batch_size,
@@ -251,19 +251,19 @@ class BaseDataModule(pl.LightningDataModule):
             worker_init_fn=lambda worker_id: np.random.seed(self.seed + worker_id))
 
     def train_dataloader(self) -> DataLoader:
-        print('vertex.py BaseDataModule/train_dataloader')
+        print('base.py BaseDataModule/train_dataloader')
         return self.dataloader(self.train_dataset)
 
     def val_dataloader(self) -> DataLoader:
-        print('vertex.py BaseDataModule/val_dataloader')
+        print('base.py BaseDataModule/val_dataloader')
         return self.dataloader(self.val_dataset)
 
     def test_dataloader(self) -> DataLoader:
-        print('vertex.py BaseDataModule/test_dataloader')
+        print('base.py BaseDataModule/test_dataloader')
         return self.dataloader(self.test_dataset)
 
     def _voxel_occupancy(self) -> np.array:
-        print('vertex.py BaseDataModule/_voxel_occupancy')
+        print('base.py BaseDataModule/_voxel_occupancy')
         """Returns the average voxel occupancy for each batch in the train dataloader."""
         if not self.sparse:
             raise RuntimeError(
@@ -280,7 +280,7 @@ class BaseDataModule(pl.LightningDataModule):
 
     @staticmethod
     def voxel_occupancy(voxel_size, dataset):
-        print('vertex.py BaseDataModule/voxel_occupancy')
+        print('base.py BaseDataModule/voxel_occupancy')
         with initialize_config_dir(config_dir='/home/alexj/hgcal-dev/configs'):
             cfg = compose(config_name='config', overrides=[
                           f'dataset={dataset}', f'dataset.voxel_size={voxel_size}', 'dataset.sparse=True', 'train=single_gpu', 'dataset.num_workers=0'])
@@ -290,11 +290,11 @@ class BaseDataModule(pl.LightningDataModule):
         return dm._voxel_occupancy()
 
     def make_dataset(self, files: List[Path], split: str) -> BaseDataset:
-        print('vertex.py BaseDataModule/make_dataset')
+        print('base.py BaseDataModule/make_dataset')
         raise NotImplementedError()
 
     def make_dataset_kwargs(self) -> dict:
-        print('vertex.py BaseDataModule/make_dataset_kwargs')
+        print('base.py BaseDataModule/make_dataset_kwargs')
         kwargs = {
             'voxel_size': self.voxel_size,
             'task': self.task,
