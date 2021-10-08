@@ -39,6 +39,7 @@ class VertexDataset(BaseDataset):
         df = self._get_df(index)
         #features = df[self.feats].to_numpy(dtype=np.half)
         features = df[self.feats].to_numpy(dtype=np.float32)
+        print('vertex task:', self.task)
         if self.task == 'panoptic':
             raise NotImplementedError()
         elif self.task == 'semantic':
