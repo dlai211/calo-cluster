@@ -192,7 +192,7 @@ class BaseDataModule(pl.LightningDataModule):
     num_classes: int
     num_features: int
     voxel_size: float
-
+    print('task:', task)
     @property
     def files(self) -> List[Path]:
         raise NotImplementedError()
