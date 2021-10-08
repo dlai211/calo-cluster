@@ -31,7 +31,7 @@ class SimpleDataModule(BaseDataModule):
     coords: List[str]
 
     def __post_init__(self):
-        print('vertex.py SimpleDataModule/__post_init__')
+        print('simple.py SimpleDataModule/__post_init__')
         super().__post_init__()
 
         self.data_dir = Path(self.data_dir)
@@ -39,7 +39,7 @@ class SimpleDataModule(BaseDataModule):
 
     @property
     def files(self) -> list:
-        print('vertex.py SimpleDataModule/files(self)')
+        print('simple.py SimpleDataModule/files(self)')
         if self._files is None:
             self._files = []
             self._files.extend(
@@ -48,7 +48,7 @@ class SimpleDataModule(BaseDataModule):
 
     @staticmethod 
     def _generate_event(rng, l, n_noise, noise_scale, signal_scale):
-        print('vertex.py SimpleDataModule/_generate_event')
+        print('simple.py SimpleDataModule/_generate_event')
         noise_x = rng.uniform(-l, l, size=n_noise)
         noise_y = rng.uniform(-l, l, size=n_noise)
         noise_z = rng.uniform(-l, l, size=n_noise)
@@ -76,7 +76,7 @@ class SimpleDataModule(BaseDataModule):
 
     @staticmethod
     def generate(data_dir, l=10, n_noise=1000, noise_scale=0.5, signal_scale=10.0, n_events=10000) -> None:
-        print('vertex.py SimpleDataModule/generate')
+        print('simple.py SimpleDataModule/generate')
         logging.info(f'Generating data at {data_dir}.')
         rng = np.random.default_rng()
         for i in tqdm(range(n_events)):
@@ -85,12 +85,12 @@ class SimpleDataModule(BaseDataModule):
             df.to_pickle(event_path)
 
     def make_dataset(self, files: List[Path], split: str) -> SimpleDataset:
-        print('vertex.py SimpleDataModule/make_dateset')
+        print('simple.py SimpleDataModule/make_dateset')
         kwargs = self.make_dataset_kwargs()
         return SimpleDataset(files=files, **kwargs)
 
     def make_dataset_kwargs(self) -> dict:
-        print('vertex.py SimpleDataModule/make_dateset_kwargs')
+        print('simple.py SimpleDataModule/make_dateset_kwargs')
         kwargs = {
             'feats': self.feats,
             'coords': self.coords
