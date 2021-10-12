@@ -9,14 +9,12 @@ from torch import exp, sqrt
 
 
 def cos_batch(a, b):
-    print('batch_seed.py cos_batch')
     num = a@b.T
     denom = torch.norm(a, dim=1).reshape(-1, 1) * torch.norm(b, dim=1)
     return num / denom
 
 
 def get_weight(sim, bandwidth):
-    print('batch_seed.py get_weight')
 
     thr = 1-bandwidth
     max = torch.tensor(1.0).double().cuda()
@@ -27,12 +25,10 @@ def get_weight(sim, bandwidth):
 
 
 def gaussian(dist, bandwidth):
-    print('batch_seed.py gaussian')
     return exp(-0.5 * ((dist / bandwidth))**2) / (bandwidth * math.sqrt(2 * math.pi))
 
 
 def meanshift_torch(data, seed, bandwidth, max_iter=300):
-    print('batch_seed.py meanshift_torch')
 
     stop_thresh = 1e-3 * bandwidth
     iter = 0
