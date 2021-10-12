@@ -5,7 +5,6 @@ from calo_cluster.clustering.base_clusterer import BaseClusterer
 import numpy as np
 
 class MeanShift(BaseClusterer):
-    print('running meanshift.py')
     def __init__(self, *, use_gpu=True, use_semantic=False, ignore_semantic_labels=None, **kwargs):
         if use_gpu:
             self.clusterer = MeanShiftCosine(**kwargs)
@@ -14,7 +13,6 @@ class MeanShift(BaseClusterer):
         super().__init__(use_semantic, ignore_semantic_labels)
 
     def cluster(self, embedding, semantic_labels=None):
-        print('meanshift.py cluster')
         """Clusters hits in event. If self.use_semantic, clusters only within each predicted semantic subset. 
            If self.ignore_semantic_labels, ignores hits with the given semantic labels."""
         if self.use_semantic:
