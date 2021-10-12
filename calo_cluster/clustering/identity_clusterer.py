@@ -6,5 +6,4 @@ class IdentityClusterer(BaseClusterer):
         super().__init__(use_semantic, ignore_semantic_labels=None)
 
     def cluster(self, event):
-        print('running identity_clusterer.py')
         return event.embedding
