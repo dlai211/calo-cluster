@@ -14,13 +14,11 @@ from .base import BaseDataModule, BaseDataset
 
 @dataclass
 class VertexDataset(BaseDataset):
-    print('running vertex.py/VertexDataset')
     feats: list
     coords: list
     instance_label: str
 
     def __post_init__(self):
-        print('vertex.py VertexDataset/__post_init__')
         if self.instance_label == 'truth':
             self.instance_label = 'truth_vtxID'
         elif self.instance_label == 'reco':
@@ -30,12 +28,10 @@ class VertexDataset(BaseDataset):
         return super().__post_init__()
 
     def _get_df(self, index: int) -> pd.DataFrame:
-        print('vertex.py VertexDataset/_get_df')
         df = pd.read_pickle(self.files[index])
         return df
 
     def _get_numpy(self, index: int) -> Tuple[np.array, np.array, Union[np.array, None], Union[np.array, None]]:
-        print('vertex.py VertexDataset/_get_numpy')
         df = self._get_df(index)
         #features = df[self.feats].to_numpy(dtype=np.half)
         features = df[self.feats].to_numpy(dtype=np.float32)
@@ -57,7 +53,6 @@ class VertexDataset(BaseDataset):
 
 @dataclass
 class VertexDataModule(BaseDataModule):
-    print('running vertex.py/VertexDataModule')
 
     data_dir: str
 
@@ -67,7 +62,6 @@ class VertexDataModule(BaseDataModule):
     instance_label: str
 
     def __post_init__(self):
-        print('vertex.py VertexDataModule/__post_init__')
         super().__post_init__()
 
         self.data_dir = Path(self.data_dir)
@@ -76,7 +70,6 @@ class VertexDataModule(BaseDataModule):
 
     @property
     def files(self) -> list:
-        print('vertex.py VertexDataModule/files(self)')
         if self._files is None:
             self._files = []
             self._files.extend(
@@ -84,12 +77,10 @@ class VertexDataModule(BaseDataModule):
         return self._files
 
     def make_dataset(self, files: List[Path], split: str) -> BaseDataset:
-        print('vertex.py VertexDataModule/make_dataset')
         kwargs = self.make_dataset_kwargs()
         return VertexDataset(files=files, **kwargs)
 
     def make_dataset_kwargs(self) -> dict:
-        print('vertex.py VertexDataModule/make_dataset_kwargs(self)')
         kwargs = {
             'feats': self.feats,
             'coords': self.coords,
@@ -100,7 +91,6 @@ class VertexDataModule(BaseDataModule):
 
     @staticmethod
     def root_to_pickle(root_data_path, raw_data_dir):
-        print('vertex.py VertexDataModule/root_to_pickle')
         ni = 0
         for f in sorted(root_data_path.glob('*.root')):
             root_dir = uproot.open(f)
